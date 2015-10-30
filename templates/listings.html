@@ -1,0 +1,22 @@
+{% extends "dashboard.html" %}
+{% block body %}
+
+<table width = "500px">
+<tr>
+    <th> Name </th>
+    <th> Description </th>
+    <th> Price </th>
+    <th> Location </th>
+</tr>
+
+{% for item in inventory %}
+<tr>
+<td>{{ item.name }}</td>
+<td>{{ item.description }}</td>
+<td>{{ item.price }}</td>
+<td>{{ item.location.name }}</td>
+</tr>
+
+{% endfor %}
+
+{% endblock %}

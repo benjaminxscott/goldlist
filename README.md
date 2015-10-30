@@ -3,10 +3,9 @@ A place to list Jeff Goldblum memorablilia for sale
 
 TODO 
 
-- python lib to add/edit item {name, category, desc, price}
-- flask template to view
+- write helper functions w/ sqlalchemy to add/edit item {name, category, desc, price}
 - user auth
-- JSON results for all items 
-- // per item
+- JSON results for all items (and a single one)
 - bootstrappy front end
 - fancy logo from squarespace.com/logo
+- hilarious pictures and desc from movies
