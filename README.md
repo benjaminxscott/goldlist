@@ -2,11 +2,6 @@
 A place to list Jeff Goldblum memorablilia for sale
 
 TODO 
-
-- write helper functions w/ sqlalchemy to add/edit item {name, category, desc, price}
 - user auth
-- JSON results for all items (and a single one)
-- bootstrappy front end
+- JSON results for all items or single entry
 - use db_seed to wipe and build DB for deployment
-- fancy logo from squarespace.com/logo
-- hilarious pictures and desc from movies
