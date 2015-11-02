@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, flash
 
 app = Flask(__name__)
 
@@ -147,4 +147,6 @@ def utility_processor():
 # ----- RUN CONFIG ------
 if __name__ == '__main__':
     app.debug = True
+    with open ("app.cfg", "r") as config:
+        app.secret_key = config.read()
     app.run(host = '0.0.0.0', port = 8080)
