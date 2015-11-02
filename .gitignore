@@ -1,6 +1,9 @@
 # database store
 *.db
 
+# local private keys
+app.cfg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
