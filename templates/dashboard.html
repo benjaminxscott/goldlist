@@ -23,16 +23,28 @@
       </div>
     </div>
 </header>
+
+{% with msg = get_flashed_messages() %}
+  {% if msg %}
+   {% for flashed in msg %}
+    
+     <div class="alert alert-info" role="alert">
+      {{ flashed }} 
+     </div>
+    
+    {% endfor %}
+    {% endif %}
+{% endwith %}
+
 {% block body %}
 {% endblock %}
 
-<div id="footer" style="position: relative;">
+<div id="footer" style="position: absolute;">
   <hr />
-  <div class="container">
-    <p class="text-muted"> Would you like to list 
+  <div class="navbar navbar-fixed-bottom">
+    <h2 class="text-muted"> Would you like to list 
     <a href = {{ url_for('add_inventory', _external = True ) }} >something?</a>
- 
-    </p>
+    </h2>
   </div>
 </div>
 

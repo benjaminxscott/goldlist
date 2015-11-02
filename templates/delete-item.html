@@ -3,8 +3,6 @@
 
 <div class="container"></div>
 
-{% if need_user_input %}
-
 <title> De-list your Item </title>
 <h1> Remove Listing</h1>
 
@@ -16,15 +14,6 @@
 <input type="submit" value = "Remove My Listing" >
     
 </form>
-
-{% else %}
-<!-- Our edited listing will be accessible under 'item' -->
-    <title> {{ item.name }} is deleted </title>
-    
-    <p> Your listing for {{ item.name }} has been removed </p>
-    
-    
-{% endif %}
 
 </div>
 {% endblock %}

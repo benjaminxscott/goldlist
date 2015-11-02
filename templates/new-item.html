@@ -3,8 +3,6 @@
 
 <div class="container"></div>
 
-{% if need_user_input %}
-
 <title> List Your Item </title>
 <h1> Add My Listing</h1>
 
@@ -30,16 +28,6 @@
 <input type="submit" value = "Add My Listing" >
     
 </form>
-
-{% elif item != None %}
-<!-- Our newly created listing will be accessible under 'item' -->
-    <title> {{ item.name }} is now on our List</title>
-    
-    <p> Great news! {{ item.name }} has been listed </p>
-    <a href = {{ url_for('edit_inventory', listing_id = item.listing_id, _external = True ) }} >Edit your Listing Here</a>
-
-    
-{% endif %}
 
 </div>
 {% endblock %}

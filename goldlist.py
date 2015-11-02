@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template, url_for, request, flash
+from flask import Flask, render_template, url_for, request, flash, Markup
 
 app = Flask(__name__)
 
@@ -36,12 +36,10 @@ def get_inventory():
 def add_inventory():
     
     new_listing = None
-    need_user_input = True
     
     # Add our item to DB via provided POST vars
     if request.method == 'POST':
-        need_user_input = False
-        
+
         if request.form['name']:
             name = request.form['name']
         if request.form['description']:
@@ -60,19 +58,24 @@ def add_inventory():
         session.add(new_listing)
         session.commit()
         
-
-    return render_template("new-item.html", item = new_listing, need_user_input=need_user_input ) 
+        msg = "%s has been listed" % new_listing.name
+        msg += "<a href = "  
+        msg += url_for('edit_inventory', listing_id = new_listing.listing_id, _external = True ) 
+        msg += " > Edit it here</a>"
+        
+        # safe for rendering (no xss)    
+        msg = Markup(msg)
+        flash(msg)
+        
+    return render_template("new-item.html", item = new_listing ) 
     
 @app.route('/listing/edit/<int:listing_id>', methods=['GET','POST'])
 def edit_inventory(listing_id):
-    need_user_input = True
-    
+
     changed_listing = get_listing(listing_id)
     
     # Edit the item provided
     if request.method == 'POST':
-        need_user_input = False
-        
         changed_listing = get_listing(listing_id)
         
         if request.form['name']:
@@ -85,27 +88,28 @@ def edit_inventory(listing_id):
         session.add(changed_listing)
         session.commit()
         
+        flash ("Your changes to %s have been saved " % changed_listing.name)
 
-    return render_template("edit-item.html", item = changed_listing, need_user_input=need_user_input ) 
+    return render_template("edit-item.html", item = changed_listing ) 
     
 
 @app.route('/listing/delete/<int:listing_id>', methods=['GET','POST'])
 def delete_inventory(listing_id):
     # remove the provided listing
-    need_user_input = True
-    
+
     toremove_listing = get_listing(listing_id)
     
     # Remove the item provided
     if request.method == 'POST':
-        need_user_input = False
-        
+
         toremove_listing = get_listing(listing_id)
 
         session.delete(toremove_listing)
         session.commit()
         
-    return render_template("delete-item.html", item = toremove_listing, need_user_input=need_user_input ) 
+        flash ("Your listing for %s has been removed" % toremove_listing.name)
+        
+    return render_template("delete-item.html", item = toremove_listing ) 
     
 
 @app.route('/location/<int:loc_id>/')
