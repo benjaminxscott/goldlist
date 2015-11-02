@@ -26,41 +26,87 @@ def about():
     return render_template("about.html")
     
 @app.route('/listings')
-def show_inventory():
+def get_inventory():
 
-    # list all items in current inventory
-    inventory = session.query(Listing).all()
-    
-    return render_template("listings.html", inventory=inventory)
+    return render_template("listings.html")
     
 
 @app.route('/listing/new', methods=['GET','POST'])
 
 def add_inventory():
     
+    new_listing = None
+    need_user_input = True
+    
+    # Add our item to DB via provided POST vars
     if request.method == 'POST':
+        need_user_input = False
         
-        new_listing = Listing(name= request.form['name'], description = request.form['description'], price = request.form['price']) #TODO location=request.form['location'])
+        if request.form['name']:
+            name = request.form['name']
+        if request.form['description']:
+            description = request.form['description']
+        if request.form['price']:
+            price = request.form['price']
+            
+        if request.form['location_id']:
+            # validate location exists, or insert as "unknown"
+            location = get_location(request.form['location_id'])
+            if location == None:
+                location = Location()
+                location.name = "Unknown"
+                
+        new_listing = Listing(name= name, description = description, price = price, location = location )
         session.add(new_listing)
         session.commit()
+        
 
-    
-    # TODO listing_name, description = "", price = 0.0, location_id = None
-    # TODO return render_template("new-item.html", item = listing, created_successfully=created_successfully
-    # TODO set need_user_input as appropriate along with created_successfully    
-    
-    return render_template("new-item.html", need_user_input=True) 
+    return render_template("new-item.html", item = new_listing, need_user_input=need_user_input ) 
     
 @app.route('/listing/edit/<int:listing_id>', methods=['GET','POST'])
 def edit_inventory(listing_id):
-    # TODO make changes to the given listing
-    return "TODO"
+    need_user_input = True
+    
+    changed_listing = get_listing(listing_id)
+    
+    # Edit the item provided
+    if request.method == 'POST':
+        need_user_input = False
+        
+        changed_listing = get_listing(listing_id)
+        
+        if request.form['name']:
+            changed_listing.name = request.form['name']
+        if request.form['description']:
+            changed_listing.description = request.form['description']
+        if request.form['price']:
+            changed_listing.price = request.form['price']
+            
+        session.add(changed_listing)
+        session.commit()
+        
+
+    return render_template("edit-item.html", item = changed_listing, need_user_input=need_user_input ) 
     
 
-@app.route('/listing/delete<int:listing_id>', methods=['GET','POST'])
+@app.route('/listing/delete/<int:listing_id>', methods=['GET','POST'])
 def delete_inventory(listing_id):
-    # TODO remove the given listing
-    return "TODO"
+    # remove the provided listing
+    need_user_input = True
+    
+    toremove_listing = get_listing(listing_id)
+    
+    # Remove the item provided
+    if request.method == 'POST':
+        need_user_input = False
+        
+        toremove_listing = get_listing(listing_id)
+
+        session.delete(toremove_listing)
+        session.commit()
+        
+    return render_template("delete-item.html", item = toremove_listing, need_user_input=need_user_input ) 
+    
 
 @app.route('/location/<int:loc_id>/')
 def show_location(loc_id):
@@ -72,6 +118,30 @@ def show_location(loc_id):
 
 
 # ----- APP LOGIC -----
+
+def get_location(location_id):
+    location = session.query(Location).filter_by(loc_id = location_id).one()
+    return location
+
+def get_listing(listing_id):
+    listing = session.query(Listing).filter_by(listing_id = listing_id).one()
+    return listing
+
+@app.context_processor
+def utility_processor():
+
+    def all_locations():
+        # list all locations we know about
+        locations = session.query(Location).all()
+        
+        return locations
+        
+    def all_listings():
+        # list all items in current inventory
+        inventory = session.query(Listing).all()
+        return inventory
+        
+    return dict(all_locations=all_locations, all_listings=all_listings)    
 
 
 # ----- RUN CONFIG ------

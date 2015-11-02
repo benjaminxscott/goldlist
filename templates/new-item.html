@@ -1,0 +1,45 @@
+{% extends "dashboard.html" %}
+{% block body %}
+
+<div class="container"></div>
+
+{% if need_user_input %}
+
+<title> List Your Item </title>
+<h1> Add My Listing</h1>
+
+<form action= "{{ url_for('add_inventory' , _external = True ) }}" method = 'post'>
+<p> What would you like to list?</p>
+<input type = 'text' size='40' name = 'name'>
+<p> What is this thing?</p>
+<input type = 'text' size='60' name = 'description'>
+<p> How much you want for it?</p>
+<input type = 'text' size='20' name  = 'price'>
+
+<!-- populate dropdown from locations -->
+<p> Where does it live?</p>
+<select name="location_id">
+
+{% for place in all_locations() %}
+    <option value= {{ place.loc_id }} >{{ place.name }}</option>
+{% endfor %}
+</select>
+
+
+</br>
+<input type="submit" value = "Add My Listing" >
+    
+</form>
+
+{% elif item != None %}
+<!-- Our newly created listing will be accessible under 'item' -->
+    <title> {{ item.name }} is now on our List</title>
+    
+    <p> Great news! {{ item.name }} has been listed </p>
+    <a href = {{ url_for('edit_inventory', listing_id = item.listing_id, _external = True ) }} >Edit your Listing Here</a>
+
+    
+{% endif %}
+
+</div>
+{% endblock %}

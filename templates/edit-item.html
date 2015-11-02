@@ -1,0 +1,35 @@
+{% extends "dashboard.html" %}
+{% block body %}
+
+<div class="container"></div>
+
+{% if need_user_input %}
+
+<title> Change your Item </title>
+<h1> Edit Your Listing</h1>
+
+<form action= "{{ url_for('edit_inventory' ,listing_id = item.listing_id, _external = True ) }}" method = 'post'>
+
+<p> New Name</p>
+<input type = 'text' placeholder = {{ item.name }} size='40' name = 'name'>
+<p> New Description?</p>
+<input type = 'text' placeholder = {{ item.description }} size='60' name = 'description'>
+<p> New Price</p>
+<input type = 'text' placeholder = {{ item.price }} size='20' name  = 'price'>
+
+</br>
+<input type="submit" value = "Change My Listing" >
+    
+</form>
+
+{% else %}
+<!-- Our edited listing will be accessible under 'item' -->
+    <title> {{ item.name }} has been changed </title>
+    
+    <p> Your changes to {{ item.name }} have been saved </p>
+    <a href = {{ url_for('edit_inventory', listing_id = item.listing_id, _external = True ) }} >Edit your Listing Here</a>
+    
+{% endif %}
+
+</div>
+{% endblock %}
