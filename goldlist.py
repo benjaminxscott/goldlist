@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for, request
 
 app = Flask(__name__)
 
 # ----- DB SETUP -----
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dbsetup import Base, Listing, Location
+from db_setup import Base, Listing, Location
 
 engine = create_engine ('sqlite:///listings.db')
 Base.metadata.bind = engine
@@ -37,15 +37,19 @@ def show_inventory():
 @app.route('/listing/new', methods=['GET','POST'])
 
 def add_inventory():
-    # TODO use GET variable "name" and "description" and "location" if provided and generate the rest
-    # TODO grab post data for item like ^
     
-    #if request.method == 'POST':
-     #   item = Listing()
+    if request.method == 'POST':
+        
+        new_listing = Listing(name= request.form['name'], description = request.form['description'], price = request.form['price']) #TODO location=request.form['location'])
+        session.add(new_listing)
+        session.commit()
+
     
-    # TODO generate backlink using url_for on location/
-    msg = "Good job - added " # TODO popup a toast msg %s" % item.name
-    return msg # TODO render_template("dashboard.html", message=msg)
+    # TODO listing_name, description = "", price = 0.0, location_id = None
+    # TODO return render_template("new-item.html", item = listing, created_successfully=created_successfully
+    # TODO set need_user_input as appropriate along with created_successfully    
+    
+    return render_template("new-item.html", need_user_input=True) 
     
 @app.route('/listing/edit/<int:listing_id>', methods=['GET','POST'])
 def edit_inventory(listing_id):
@@ -54,7 +58,7 @@ def edit_inventory(listing_id):
     
 
 @app.route('/listing/delete<int:listing_id>', methods=['GET','POST'])
-def delete_inventory():
+def delete_inventory(listing_id):
     # TODO remove the given listing
     return "TODO"
 
