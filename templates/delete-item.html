@@ -6,9 +6,9 @@
 <title> De-list your Item </title>
 <h1> Remove Listing</h1>
 
-<form action= "{{ url_for('delete_inventory' ,listing_id = item.listing_id, _external = True ) }}" method = 'post'>
+<form action= "{{ url_for('delete_inventory' ,listing_id = listing_id, _external = True ) }}" method = 'post'>
 
-<p> Really Delete {{ item.name }} ? (This operation cannot be un-done)</p>
+<p> Really Delete item with ID {{ listing_id }}? (This operation cannot be un-done)</p>
 
 </br>
 <input type="submit" value = "Remove My Listing" >

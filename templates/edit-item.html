@@ -4,9 +4,12 @@
 <div class="container"></div>
 
 <title> Change your Item </title>
+
+{% if item != None %}
 <h1> Edit Your Listing</h1>
 
 <form action= "{{ url_for('edit_inventory' ,listing_id = item.listing_id, _external = True ) }}" method = 'post'>
+
 
 <p> New Name</p>
 <input type = 'text' placeholder = {{ item.name }} size='40' name = 'name'>
@@ -17,7 +20,9 @@
 
 </br>
 <input type="submit" value = "Change My Listing" >
-    
+
+{% endif %}
+
 </form>
 
 </div>

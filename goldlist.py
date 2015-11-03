@@ -49,10 +49,10 @@ def add_inventory():
             
         if request.form['location_id']:
             # validate location exists, or insert as "unknown"
-            location = get_location(request.form['location_id'])
-            if location == None:
-                location = Location()
-                location.name = "Unknown"
+            try:
+                location = session.query(Location).filter_by(loc_id = request.form['location_id']).one()
+            except:
+                flash("That doesn't look like a valid location") 
                 
         new_listing = Listing(name= name, description = description, price = price, location = location )
         session.add(new_listing)
@@ -71,25 +71,28 @@ def add_inventory():
     
 @app.route('/listing/edit/<int:listing_id>', methods=['GET','POST'])
 def edit_inventory(listing_id):
-
-    changed_listing = get_listing(listing_id)
+    # TODO handle chicken / egg problem of rendering an item that doesn't exist yet
     
     # Edit the item provided
     if request.method == 'POST':
-        changed_listing = get_listing(listing_id)
-        
-        if request.form['name']:
-            changed_listing.name = request.form['name']
-        if request.form['description']:
-            changed_listing.description = request.form['description']
-        if request.form['price']:
-            changed_listing.price = request.form['price']
+        try:
+            changed_listing = session.query(Listing).filter_by(listing_id = listing_id).one()
             
-        session.add(changed_listing)
-        session.commit()
-        
-        flash ("Your changes to %s have been saved " % changed_listing.name)
-
+            if request.form['name']:
+                changed_listing.name = request.form['name']
+            if request.form['description']:
+                changed_listing.description = request.form['description']
+            if request.form['price']:
+                changed_listing.price = request.form['price']
+                
+            session.add(changed_listing)
+            session.commit()
+            
+            flash ("Your changes to %s have been saved " % changed_listing.name)
+            
+        except :
+            flash("Looks like that listing doesn't exist")
+                
     return render_template("edit-item.html", item = changed_listing ) 
     
 
@@ -97,19 +100,17 @@ def edit_inventory(listing_id):
 def delete_inventory(listing_id):
     # remove the provided listing
 
-    toremove_listing = get_listing(listing_id)
-    
-    # Remove the item provided
     if request.method == 'POST':
-
-        toremove_listing = get_listing(listing_id)
-
-        session.delete(toremove_listing)
-        session.commit()
+        try:
+            toremove_listing = session.query(Listing).filter_by(listing_id = listing_id).one()
+            session.delete(toremove_listing)
+            session.commit()
+            flash ("Your listing for %s has been removed" % toremove_listing.name)
+            
+        except:
+            flash("Looks like that listing has been removed already")
         
-        flash ("Your listing for %s has been removed" % toremove_listing.name)
-        
-    return render_template("delete-item.html", item = toremove_listing ) 
+    return render_template("delete-item.html", listing_id=listing_id) 
     
 
 @app.route('/location/<int:loc_id>/')
@@ -122,14 +123,6 @@ def show_location(loc_id):
 
 
 # ----- APP LOGIC -----
-
-def get_location(location_id):
-    location = session.query(Location).filter_by(loc_id = location_id).one()
-    return location
-
-def get_listing(listing_id):
-    listing = session.query(Listing).filter_by(listing_id = listing_id).one()
-    return listing
 
 @app.context_processor
 def utility_processor():
