@@ -23,10 +23,22 @@ class Listing (Base):
     name = Column(String(128), nullable = False)
     description = Column(String(256), nullable = True)
     price = Column(Float)
+     
     
     loc_id = Column(Integer, ForeignKey('location.loc_id'))
     location = relationship(Location)
 
+    # json definition 
+    @property
+    def serialize(self):
+        return {
+            'name':self.name ,
+            'listing_id':self.listing_id ,
+            'description':self.description ,
+            'price':self.price ,
+            'location_id':self.loc_id 
+            }
+            
 # spell out where our db will live and its type
 engine = create_engine( 'sqlite:///listings.db')
 

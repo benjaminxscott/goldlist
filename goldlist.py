@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template, url_for, request, flash, Markup
+from flask import Flask, render_template, url_for, request, flash, Markup, jsonify
 
 app = Flask(__name__)
 
@@ -15,20 +15,20 @@ Base.metadata.bind = engine
 DBsession = sessionmaker(bind = engine)
 session = DBsession()
 
+
 # ----- URL ROUTING -----
 
+# landing page
 @app.route('/')
-def landing():
-    return render_template("dashboard.html")
-    
-@app.route('/about')
-def about():
-    return render_template("about.html")
-    
-@app.route('/listings')
+@app.route('/listings', alias = True)
 def get_inventory():
-
-    return render_template("listings.html")
+    # API ENDPOINT
+    if request.args.get("format") == "json":
+        inventory = session.query(Listing).all()
+        json_data = jsonify(GoldListing = [item.serialize for item in inventory])
+        return json_data
+    else:
+        return render_template("listings.html")
     
 
 @app.route('/listing/new', methods=['GET','POST'])
@@ -48,7 +48,7 @@ def add_inventory():
             price = request.form['price']
             
         if request.form['location_id']:
-            # validate location exists, or insert as "unknown"
+            # TODO validate location exists
             try:
                 location = session.query(Location).filter_by(loc_id = request.form['location_id']).one()
             except:
@@ -76,6 +76,7 @@ def edit_inventory(listing_id):
     # Edit the item provided
     if request.method == 'POST':
         try:
+            # TODO - debug error
             changed_listing = session.query(Listing).filter_by(listing_id = listing_id).one()
             
             if request.form['name']:
@@ -117,12 +118,19 @@ def delete_inventory(listing_id):
 def show_location(loc_id):
 
     inventory = session.query(Listing).filter_by(loc_id = loc_id) 
-    
+    # TODO - refactor so that inventory actually is a filter
+    return render_template("listings.html", inventory=inventory)
+
+@app.route('/listing/<int:listing_id>/')
+def show_listing(listing_id):
+    item = session.query(Listing).filter_by(listing_id = listing_id).one()
+    # TODO - return a single item
     return render_template("listings.html", inventory=inventory)
 
 
 
-# ----- APP LOGIC -----
+
+# ----- FUNCTIONS  -----
 
 @app.context_processor
 def utility_processor():
