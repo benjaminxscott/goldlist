@@ -73,27 +73,29 @@ def add_inventory():
 def edit_inventory(listing_id):
     # TODO handle chicken / egg problem of rendering an item that doesn't exist yet
     
+    try:
+        changed_listing = session.query(Listing).filter_by(listing_id = listing_id).one()
+    
+    except :
+        flash("Looks like that listing doesn't exist")
+        
+    
     # Edit the item provided
     if request.method == 'POST':
-        try:
-            # TODO - debug error
-            changed_listing = session.query(Listing).filter_by(listing_id = listing_id).one()
+        
+        if request.form['name']:
+            changed_listing.name = request.form['name']
+        if request.form['description']:
+            changed_listing.description = request.form['description']
+        if request.form['price']:
+            changed_listing.price = request.form['price']
             
-            if request.form['name']:
-                changed_listing.name = request.form['name']
-            if request.form['description']:
-                changed_listing.description = request.form['description']
-            if request.form['price']:
-                changed_listing.price = request.form['price']
-                
-            session.add(changed_listing)
-            session.commit()
+        session.add(changed_listing)
+        session.commit()
+        
+        flash ("Your changes to %s have been saved " % changed_listing.name)
+        
             
-            flash ("Your changes to %s have been saved " % changed_listing.name)
-            
-        except :
-            flash("Looks like that listing doesn't exist")
-                
     return render_template("edit-item.html", item = changed_listing ) 
     
 
