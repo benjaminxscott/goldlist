@@ -36,37 +36,48 @@ def get_inventory():
 def add_inventory():
     
     new_listing = None
+    error = False
     
     # Add our item to DB via provided POST vars
     if request.method == 'POST':
 
-        if request.form['name']:
+        # validate req'd fields
+        if (
+            request.form['name'] is not None and 
+            request.form['price'] is not None and 
+            request.form['location_id'] is not None
+            ):
+                
             name = request.form['name']
-        if request.form['description']:
-            description = request.form['description']
-        if request.form['price']:
             price = request.form['price']
             
-        if request.form['location_id']:
-            # TODO validate location exists
+            # validate location exists
             try:
                 location = session.query(Location).filter_by(loc_id = request.form['location_id']).one()
             except:
                 flash("That doesn't look like a valid location") 
+                error = True
                 
-        new_listing = Listing(name= name, description = description, price = price, location = location )
-        session.add(new_listing)
-        session.commit()
-        
-        msg = "%s has been listed" % new_listing.name
-        msg += "<a href = "  
-        msg += url_for('edit_inventory', listing_id = new_listing.listing_id, _external = True ) 
-        msg += " > Edit it here</a>"
-        
-        # safe for rendering (no xss)    
-        msg = Markup(msg)
-        flash(msg)
-        
+            # optional fields
+            if request.form['description']:
+                description = request.form['description']
+            else:
+                description = ""
+            
+        if not error:
+            # store in DB        
+            new_listing = Listing(name= name, description = description, price = price, location = location )
+            session.add(new_listing)
+            session.commit()
+            
+            # build a flash message safe for rendering (no xss)    
+            msg = "Nice! Would you like to  <a href = "  
+            msg += url_for('edit_inventory', listing_id = new_listing.listing_id, _external = True ) 
+            msg += " >make any edits to %s? </a>" % new_listing.name
+            
+            msg = Markup(msg)
+            flash(msg)
+            
     return render_template("new-item.html", item = new_listing ) 
     
 @app.route('/listing/edit/<int:listing_id>', methods=['GET','POST'])
