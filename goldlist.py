@@ -71,7 +71,8 @@ def add_inventory():
     
 @app.route('/listing/edit/<int:listing_id>', methods=['GET','POST'])
 def edit_inventory(listing_id):
-    # TODO handle chicken / egg problem of rendering an item that doesn't exist yet
+
+    changed_listing = None
     
     try:
         changed_listing = session.query(Listing).filter_by(listing_id = listing_id).one()

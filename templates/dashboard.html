@@ -16,8 +16,8 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/listing/new">List Your Stuff</a></li>
-            <li><a href="/listings">Browse All Listings</a></li>
+            <li class="active"><a href="{{ url_for('add_inventory',  _external = True ) }}">List Your Stuff</a></li>
+            <li><a href="{{ url_for('get_inventory',  _external = True ) }}">Browse All Listings</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

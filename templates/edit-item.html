@@ -21,9 +21,11 @@
 </br>
 <input type="submit" value = "Change My Listing" >
 
+</form>
 {% endif %}
 
-</form>
+
+<p><a href="{{ url_for('get_inventory',  _external = True ) }}"> Show me all the listings </a></p>
 
 </div>
 {% endblock %}
