@@ -131,18 +131,13 @@ def delete_inventory(listing_id):
 @app.route('/location/<int:loc_id>/')
 def show_location(loc_id):
 
+    # filter by this location
     inventory = session.query(Listing).filter_by(loc_id = loc_id) 
-    # TODO - refactor so that inventory actually is a filter
+    
+    if len( inventory.all() ) == 0:
+        flash ("Looks like there is nothing listed at that location")
+    
     return render_template("listings.html", inventory=inventory)
-
-@app.route('/listing/<int:listing_id>/')
-def show_listing(listing_id):
-    item = session.query(Listing).filter_by(listing_id = listing_id).one()
-    # TODO - return a single item
-    return render_template("listings.html", inventory=inventory)
-
-
-
 
 # ----- FUNCTIONS  -----
 

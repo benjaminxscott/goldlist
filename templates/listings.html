@@ -14,7 +14,11 @@
     <th>   </th>
 </tr>
 
-{% for item in all_listings() %}
+{%if inventory == None %}
+{%set inventory = all_listings() %}
+{% endif %}
+
+{% for item in inventory %}
 <tr>
 <td>{{ item.name }}</td>
 <td>{{ item.description }}</td>
