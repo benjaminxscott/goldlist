@@ -30,6 +30,10 @@ def get_inventory():
     else:
         return render_template("listings.html")
     
+@app.route('/login')
+def show_login():
+    return render_template("login.html")
+
 
 @app.route('/listing/new', methods=['GET','POST'])
 
@@ -140,6 +144,12 @@ def show_location(loc_id):
     return render_template("listings.html", inventory=inventory)
 
 # ----- FUNCTIONS  -----
+
+def do_login():
+    return True #login token
+
+# TODO handle getting new token before timeout using refresh token from goog
+
 
 @app.context_processor
 def utility_processor():
