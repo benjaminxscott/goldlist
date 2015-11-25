@@ -33,7 +33,7 @@
             // send off the one-time code
             $.ajax ({ 
                 type: 'POST' ,
-                url: '/gconnect?csrf_token={{STATE}}',
+                url: '/gconnect?csrf_token={{csrf_token}}',
                 processData: false,
                 contentType: 'application/octet-stream; charset=utf-8',
                 data: authResult['code'],

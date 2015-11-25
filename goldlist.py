@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template, url_for, request, flash, Markup, jsonify
+from flask import Flask, render_template, url_for, request, flash, Markup, jsonify, abort
 
 from flask import session
 import random, string, json
@@ -50,47 +50,42 @@ def get_inventory():
 @app.route('/login')
 def show_login():
     # store CSRF token in session
-    session['state'] = get_csrf_token()
-    return render_template("login.html")
+    session['csrf_token'] = get_csrf_token()
+    return render_template("login.html", csrf_token=session['csrf_token'])
 
 
-@app.route('/gconnect')
+@app.route('/gconnect', methods=['POST'])
 def do_login():
     # ref: https://gist.github.com/bschmoker/74187bad5bbd0a0bf336
 
     # Validate CSRF token
-    if request.args.get('csrf_token') != session['state']:
-        return "Bad CSRF token" # TODO return 401 with JSON headers
+
+    if request.args.get('csrf_token') != session['csrf_token']:
+        print "Bad CSRF token"
+        abort(401)
 
     one_time_code = request.data # sent from jquery
     
     # exchange one-time-code for server-side access token
     try:
-        
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(one_time_code)
     except FlowExchangeError:
-        return "Oauth2 one-time-code was bogus" # TODO return 401 with JSON headers
+        print "Oauth2 one-time-code was bogus" 
+        abort(401)
     
-    
-# TODO debug output
-    if credentials.access_token:
-        return credentials.access_token 
-    else :
-        return "some error"
-    
-# TODO check whether access_token is valid using curl https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=<my_token>
+
 
 '''
 TODO grab user info
-    gplus_id = credentials.id_token['sub']
-
-    # store credentials as login session
-    session['credentials'] = credentials
-    session['gplus_id'] = gplus_id
+    # store credentials for later use
+    session['access_token'] = credentials.get('access_token')
+    session['gplus_id'] = credentials.get('gplus_id')
+    session['provider'] = 'google'
     
     # Get user info
+    import request
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
