@@ -2,13 +2,11 @@
 {% block body %}
 
 <div class = "container">
-    <div id="loginButton"></div>
+    <div id="loginButton">
         <!-- TODO after debugging remove data-approvalprompt=force -->
         <!-- We will receive a one-time code + access token - data-redirecturi = "postmessage" -->
         
-        <!-- QUESTION: why not clickable -->
-        <a class="btn btn-social btn-google" >
-            <span class="fa fa-google "
+            <span class="g-signin"
                 data-scope = "openid email"
                 data-clientid = {{ client_id }}
                 data-redirecturi = "postmessage"
@@ -16,8 +14,9 @@
                 data-cookiepolicy="single_host_origin"
                 data-callback="loginCallback"
                 data-approvalprompt="force" 
-            ></span> Sign in with Google
-        </a>
+            ></span> 
+        
+        </div>
 </div>
 
 <div id="output"><!-- empty until populated with login results --> </div>
