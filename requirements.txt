@@ -1,3 +1,4 @@
 flask
 sqlalchemy
 oauth2client
+requests
