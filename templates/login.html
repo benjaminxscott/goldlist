@@ -2,12 +2,69 @@
 {% block body %}
 
 <div class = "container">
-    <div class = "row"></div>
-        <a class="btn btn-block btn-social btn-google" >
-            <span class="fa fa-google"></span> Sign in with Google
+    <div id="loginButton"></div>
+        <!-- TODO after debugging remove data-approvalprompt=force -->
+        <!-- We will receive a one-time code + access token - data-redirecturi = "postmessage" -->
+        
+        <!-- QUESTION: why not clickable -->
+        <a class="btn btn-social btn-google" >
+            <span class="fa fa-google "
+                data-scope = "openid email"
+                data-clientid = {{ client_id }}
+                data-redirecturi = "postmessage"
+                data-accesstype="offline"
+                data-cookiepolicy="single_host_origin"
+                data-callback="loginCallback"
+                data-approvalprompt="force" 
+            ></span> Sign in with Google
         </a>
-    </div>
 </div>
 
+<div id="output"><!-- empty until populated with login results --> </div>
+
+<script>
+    function loginCallback (authResult)
+    {
+        // check that google responded success
+        if (authResult['code'])
+        {
+            // hide login button
+            $('#loginButton').attr('style', 'display:none');
+        
+            // send off the one-time code
+            $.ajax ({ 
+                type: 'POST' ,
+                url: '/gconnect?csrf_token={{STATE}}',
+                processData: false,
+                contentType: 'application/octet-stream; charset=utf-8',
+                data: authResult['code'],
+                success: function(loginSuccess)
+                    {
+                        if (loginSuccess) 
+                        {
+                            
+                            $('output').html('Logged In Successfully <br> ' + loginSuccess)
+                            setTimeout(function() 
+                            {
+                                window.location.href = "/listings"
+                            }, 3000);
+                        }
+                        else if (authResult['error'])
+                        {
+                            console.log(authResult['error'])
+                        }
+                    
+                        else 
+                        {
+                            $('#output').html('Something went wrong - please call the devs');
+                        }
+                    }
+            })
+            
+            
+        }
+        
+    }
+</script>
 
 {% endblock %}
