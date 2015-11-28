@@ -55,6 +55,35 @@ def show_login():
     session['csrf_token'] = get_csrf_token()
     return render_template("login.html", csrf_token=session['csrf_token'])
 
+@app.route('/logout')
+def do_logout():
+    # TODO access_token = login_session['access_token']
+    
+    if session['access_token'] is None:
+        print "Nobody was logged in"
+     	abort (401)
+    	
+    google_api_userlogout = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % session['access_token']
+    response = requests.get(google_api_userlogout)
+    
+    '''
+    # TODO clear user session
+    if response['status'] == '200':
+	del login_session['access_token'] 
+    	del login_session['gplus_id']
+    	del login_session['username']
+    	del login_session['email']
+    	del login_session['picture']
+    	response = make_response(json.dumps('Successfully disconnected.'), 200)
+    	response.headers['Content-Type'] = 'application/json'
+    	return response
+    else:
+	
+    	response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+    	response.headers['Content-Type'] = 'application/json'
+    	return response
+    '''
+    return redirect("/")
 
 @app.route('/gconnect', methods=['POST'])
 def do_login():

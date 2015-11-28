@@ -23,7 +23,16 @@
             <li class="active"><a href="{{ url_for('add_inventory',  _external = True ) }}">List Your Stuff</a></li>
             <li><a href="{{ url_for('get_inventory',  _external = True ) }}">Browse All Listings</a></li>
           </ul>
-        <p class= "navbar-text navbar-right">Signed in as {{ username }} </p>
+        <p class= "navbar-text navbar-right">
+          {% if username == "guest" %}
+          <a href="/login">
+        
+          {% else %}
+          <a href="/logout">
+          {% endif %}
+          
+          Signed in as {{ username }}</a>
+        </p>
         </div><!--/.nav-collapse -->
       </div>
     </div>
