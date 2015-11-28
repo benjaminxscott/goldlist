@@ -3,7 +3,7 @@
 
 <div class = "container-fluid">
     <div id="loginButton">
-        <!-- TODO after debugging remove data-approvalprompt=force -->
+        
         <!-- We will receive a one-time code + access token - data-redirecturi = "postmessage" -->
         
             <span class="g-signin"
@@ -13,7 +13,7 @@
                 data-accesstype="offline"
                 data-cookiepolicy="single_host_origin"
                 data-callback="loginCallback"
-                data-approvalprompt="force" 
+    
             ></span> 
         
         </div>
@@ -46,7 +46,7 @@
                             setTimeout(function() 
                             {
                                 window.location.href = "/listings"
-                            }, 1000);
+                            }, 100);
                         }
                         else if (authResult['error'])
                         {

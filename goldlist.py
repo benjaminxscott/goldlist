@@ -59,15 +59,15 @@ def do_logout():
     
     # clear user session 
     if session['access_token'] is None:
-        flash( "You were never logged in")
+        flash( "Looks like you're not logged in")
      	abort (401)
     	
     google_api_userlogout = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % session['access_token']
     response = requests.get(google_api_userlogout)
 
     if response.status_code is not 200:
-	    flash( "We had an issue on our end and are looking into it")
-	    abort (501)
+	    flash( "Looks like you're not logged in")
+	    abort (401)
     else:
         # successfully logged the user out
     	del session['access_token']
