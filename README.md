@@ -3,10 +3,12 @@ A place to list Jeff Goldblum memorablilia for sale
 
 ## Usage
 
+- Build a sane *nix VM
+
 - Get dependencies `pip install -r requirements.txt`
 
-- Update your `app.cfg` with an app-specific secret key
+- Populate the database `python db_seed.py`
 
-- Run the app
+- Upload your `client_secrets.json` from [google dev console](https://console.developers.google.com/apis/credentials)
 
-`./goldlist.py`
+- Run the app `./goldlist.py`
