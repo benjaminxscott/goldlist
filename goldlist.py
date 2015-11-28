@@ -22,8 +22,6 @@ app.secret_key = CLIENT_SECRET
 
 app.jinja_env.globals['client_id'] = CLIENT_ID 
 
-app.jinja_env.globals['username'] = "guest"
-
 # ----- DB SETUP -----
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -127,8 +125,7 @@ def do_login():
 
     # update username on top right profile link
     app.jinja_env.globals['username'] = session['username'] 
-    return redirect("/", code=301)
-
+    return redirect("/listings", code=301)
 
 @app.route('/listing/new', methods=['GET','POST'])
 
