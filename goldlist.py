@@ -56,33 +56,30 @@ def show_login():
     return render_template("login.html", csrf_token=session['csrf_token'])
 
 @app.route('/logout')
+@app.route('/gdisconnect', alias = True)
 def do_logout():
-    # TODO access_token = login_session['access_token']
     
+    # clear user session 
     if session['access_token'] is None:
-        print "Nobody was logged in"
+        flash( "You were never logged in")
      	abort (401)
     	
     google_api_userlogout = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % session['access_token']
     response = requests.get(google_api_userlogout)
-    
-    '''
-    # TODO clear user session
-    if response['status'] == '200':
-	del login_session['access_token'] 
-    	del login_session['gplus_id']
-    	del login_session['username']
-    	del login_session['email']
-    	del login_session['picture']
-    	response = make_response(json.dumps('Successfully disconnected.'), 200)
-    	response.headers['Content-Type'] = 'application/json'
-    	return response
+
+    if response.status_code is not 200:
+	    flash( "We had an issue on our end and are looking into it")
+	    abort (501)
     else:
-	
-    	response = make_response(json.dumps('Failed to revoke token for given user.', 400))
-    	response.headers['Content-Type'] = 'application/json'
-    	return response
-    '''
+        # successfully logged the user out
+    	del session['access_token']
+    	del session['username']
+    	del session['email']
+    	del session['gplus_id']
+    	del session['avatar']
+    	del session['provider']
+    	flash ("You have been logged out")
+    	
     return redirect("/")
 
 @app.route('/gconnect', methods=['POST'])
@@ -271,5 +268,4 @@ def utility_processor():
 
 # ----- RUN CONFIG ------
 if __name__ == '__main__':
-    app.debug = True
     app.run(host = '0.0.0.0', port = 8080)
