@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template, url_for, request, flash, Markup, jsonify, abort
+from flask import Flask, render_template, url_for, request, flash, Markup, jsonify
 
-from flask import session
-import random, string, json
+from flask import session, redirect, abort
+import random, string, json, requests
 
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -21,6 +21,8 @@ CLIENT_SECRET = json.loads(
 app.secret_key = CLIENT_SECRET
 
 app.jinja_env.globals['client_id'] = CLIENT_ID 
+
+app.jinja_env.globals['username'] = "guest"
 
 # ----- DB SETUP -----
 from sqlalchemy import create_engine
@@ -76,29 +78,30 @@ def do_login():
         abort(401)
     
 
-
-'''
-TODO grab user info
     # store credentials for later use
-    session['access_token'] = credentials.get('access_token')
-    session['gplus_id'] = credentials.get('gplus_id')
+    session['access_token'] = credentials.access_token
+    session['gplus_id'] = credentials.id_token['sub']
     session['provider'] = 'google'
     
-    # Get user info
-    import request
-    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
-    params = {'access_token': credentials.access_token, 'alt': 'json'}
-    answer = requests.get(userinfo_url, params=params)
-
-    data = answer.json()
-
-    session['username'] = data['name']
-    session['picture'] = data['picture']
-    session['email'] = data['email']
     
-    flash( "Hi there %s" %session['username'] )
-    '''
+    # lookup user's name and avatar    
+    google_api_userinfo = "https://www.googleapis.com/oauth2/v1/userinfo"
+    params = {
+        'access_token': session['access_token'],
+        'alt': 'json'
+        }
+    
+    response = requests.get( google_api_userinfo, params=params )
+    resp_data = response.json()
 
+    session['username'] = resp_data['name']
+    session['avatar'] = resp_data['picture']
+    session['email'] = resp_data['email']
+    
+
+    # update username on top right profile link
+    app.jinja_env.globals['username'] = session['username'] 
+    return redirect("/", code=301)
 
 
 @app.route('/listing/new', methods=['GET','POST'])

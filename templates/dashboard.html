@@ -8,7 +8,7 @@
 <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer> </script>
 
     <div class="navbar navbar-inverse" role="navigation">
-      <div class="container">
+      <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -23,6 +23,7 @@
             <li class="active"><a href="{{ url_for('add_inventory',  _external = True ) }}">List Your Stuff</a></li>
             <li><a href="{{ url_for('get_inventory',  _external = True ) }}">Browse All Listings</a></li>
           </ul>
+        <p class= "navbar-text navbar-right">Signed in as {{ username }} </p>
         </div><!--/.nav-collapse -->
       </div>
     </div>
