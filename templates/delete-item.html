@@ -5,10 +5,11 @@
 
 <title> De-list your Item </title>
 <h1> Remove Listing</h1>
+<div class="alert alert-danger" role="alert">
+    This change is permanent and cannot be reverted
+</div>
 
 <form action= "{{ url_for('delete_inventory' ,listing_id = listing_id, _external = True ) }}" method = 'post'>
-
-<p> Really Delete item with ID {{ listing_id }}? (This operation cannot be un-done)</p>
 
 </br>
 <input type="submit" value = "Remove My Listing" >
