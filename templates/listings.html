@@ -14,8 +14,8 @@
     <th>   </th>
 </tr>
 
-{%if inventory == None %}
-{%set inventory = all_listings() %}
+{% if inventory == "all" %}
+{% set inventory = all_listings() %}
 {% endif %}
 
 {% for item in inventory %}

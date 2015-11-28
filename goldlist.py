@@ -45,7 +45,7 @@ def get_inventory():
         json_data = jsonify(GoldListing = [item.serialize for item in inventory])
         return json_data
     else:
-        return render_template("listings.html")
+        return render_template("listings.html", inventory = "all")
     
 @app.route('/login')
 def show_login():
@@ -227,7 +227,6 @@ def utility_processor():
     def all_locations():
         # list all locations we know about
         locations = dbsession.query(Location).all()
-        
         return locations
         
     def all_listings():
