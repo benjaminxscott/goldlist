@@ -39,14 +39,18 @@ dbsession = buildsession()
 @app.route('/')
 @app.route('/listings', alias = True)
 def get_inventory():
-    # API ENDPOINT
-    if request.args.get("format") == "json":
-        inventory = dbsession.query(Listing).all()
-        json_data = jsonify(GoldListing = [item.serialize for item in inventory])
-        return json_data
-    else:
-        return render_template("listings.html", inventory = "all")
+    # show entire inventory
     
+    return render_template("listings.html", inventory = "all")
+
+@app.route('/api/listings')
+#  API ENDPOINT
+def api_get_inventory():
+    # normally would use api.domain.com/v1/operation for this
+    inventory = dbsession.query(Listing).all()
+    json_data = jsonify(GoldListing = [item.serialize for item in inventory])
+    return json_data
+
 @app.route('/login')
 def show_login():
     # store CSRF token in session
