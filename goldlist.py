@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, url_for, request, flash, Markup, jsonify
 
+from functools import wraps
 from flask import session, redirect, abort
 import random, string, json, requests
 
@@ -82,12 +83,11 @@ def do_logout():
     	del session['provider']
     	flash ("You have been logged out")
     	
-    return redirect("/")
+    return redirect(url_for("get_inventory"))
 
 @app.route('/gconnect', methods=['POST'])
 def do_login():
-    # ref: https://gist.github.com/bschmoker/74187bad5bbd0a0bf336
-
+    
     # Validate CSRF token
 
     if request.args.get('csrf_token') != session['csrf_token']:
@@ -97,6 +97,7 @@ def do_login():
     one_time_code = request.data # sent from jquery
     
     # exchange one-time-code for server-side access token
+    # (after getting a client secret): https://gist.github.com/bschmoker/74187bad5bbd0a0bf336
     try:
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
@@ -129,11 +130,14 @@ def do_login():
 
     # update username on top right profile link
     app.jinja_env.globals['username'] = session['username'] 
-    return redirect("/listings", code=301)
+    return redirect(url_for("get_inventory"))
 
 @app.route('/listing/new', methods=['GET','POST'])
-
 def add_inventory():
+    
+    # Check that user is logged in
+    if session.get('username') == None:
+        return redirect(url_for('show_login'))
     
     new_listing = None
     error = False
@@ -182,7 +186,11 @@ def add_inventory():
     
 @app.route('/listing/edit/<int:listing_id>', methods=['GET','POST'])
 def edit_inventory(listing_id):
-
+    
+    # Check that user is logged in
+    if session.get('username') == None:
+        return redirect(url_for('show_login'))
+        
     changed_listing = None
     
     try:
@@ -213,6 +221,12 @@ def edit_inventory(listing_id):
 
 @app.route('/listing/delete/<int:listing_id>', methods=['GET','POST'])
 def delete_inventory(listing_id):
+    
+    # Check that user is logged in
+    if session.get('username') == None:
+        return redirect(url_for('show_login'))
+    
+        
     # remove the provided listing
 
     if request.method == 'POST':
@@ -243,9 +257,10 @@ def show_location(loc_id):
 
 # ----- UTILITY FUNCTIONS -----
 
+
 def get_csrf_token():
     token = ''
-    for char in xrange(32):
+    for each in xrange(32):
         token += random.choice(string.ascii_uppercase + string.digits) 
 
     return token
@@ -269,4 +284,5 @@ def utility_processor():
 
 # ----- RUN CONFIG ------
 if __name__ == '__main__':
+    app.debug = True
     app.run(host = '0.0.0.0', port = 8080)
