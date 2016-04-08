@@ -14,10 +14,10 @@ from oauth2client.client import FlowExchangeError
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/etc/goldlist/client_secrets.json', 'r').read())['web']['client_id']
 
 CLIENT_SECRET = json.loads(
-    open ("client_secrets.json", "r").read())['web']['client_secret']
+    open ("/etc/goldlist/client_secrets.json", "r").read())['web']['client_secret']
 
 app.secret_key = CLIENT_SECRET
 
