@@ -9,6 +9,6 @@ A place to list Jeff Goldblum memorablilia for sale
 
 - Populate the database `python db_seed.py`
 
-- Upload your `client_secrets.json` from [google dev console](https://console.developers.google.com/apis/credentials)
+- Add your `client_secrets.json` to `/etc/goldlist/` from [google dev console](https://console.developers.google.com/apis/credentials)
 
 - Run the app `./goldlist.py`
