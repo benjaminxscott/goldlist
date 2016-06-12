@@ -39,8 +39,8 @@ class Listing (Base):
             'location_id':self.loc_id 
             }
             
-# spell out where our db will live and its type
-engine = create_engine( 'sqlite:///listings.db')
+# connect to local postgres on unix socket (note that user@localhost is omitted)
+engine = create_engine( 'postgres://catalog:supersecret@localhost/listings')
 
 # write tables and columns to disk
 Base.metadata.create_all(engine)

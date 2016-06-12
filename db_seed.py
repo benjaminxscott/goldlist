@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from db_setup import Base, Listing, Location
 
-engine = create_engine('sqlite:///listings.db')
+engine = create_engine('postgres://catalog:supersecret@localhost/listings')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)

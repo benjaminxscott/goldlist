@@ -28,7 +28,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Listing, Location
 
-engine = create_engine ('sqlite:///listings.db')
+# TODO - use postgres binding
+
+engine = create_engine( 'postgres://catalog:supersecret@localhost/listings')
 Base.metadata.bind = engine
 
 buildsession = sessionmaker(bind = engine)
